@@ -1,0 +1,75 @@
+
+---
+ar_internal_metadata:
+  columns:
+  - key
+  - value
+  - created_at
+  - updated_at
+  records: 
+  - - environment
+    - development
+    - '2017-10-24 17:05:40.251945'
+    - '2017-10-24 17:05:40.251945'
+
+---
+customers:
+  columns:
+  - id
+  - order
+  - address
+  - latitude
+  - longitude
+  - created_at
+  - updated_at
+  records: 
+  - - 2
+    - 5 Pizzes
+    - 868 Hunts Point Ave, Bronx, NY 10474, USA
+    - 40.8185796
+    - -73.8890936
+    - '2017-10-27 07:40:34.403213'
+    - '2017-10-27 07:40:34.403213'
+  - - 3
+    - 10 Pizzas
+    - 1431 E 108th St, Brooklyn, NY 11236
+    - 40.6400187
+    - -73.8822506
+    - '2017-10-27 10:17:43.56784'
+    - '2017-10-27 10:17:43.56784'
+  - - 5
+    - 10 Pizzas
+    - NYU Winthrop Hospital
+    - 40.7409786
+    - -73.6431871
+    - '2017-10-27 11:13:42.122209'
+    - '2017-10-27 11:13:42.122209'
+
+---
+locations:
+  columns:
+  - id
+  - address
+  - latitude
+  - longitude
+  - created_at
+  - updated_at
+  - title
+  - radius
+  records: 
+  - - 34
+    - 108-30 Flatlands Ave, Brooklyn, NY 11236, USA
+    - 40.6405134
+    - -73.8819335
+    - '2017-10-26 15:53:13.466247'
+    - '2017-10-26 15:53:13.466247'
+    - KFC
+    - 10000.0
+  - - 35
+    - 761 7th Ave, New York, NY 10019, USA
+    - 40.761055
+    - -73.9827553
+    - '2017-10-26 19:13:49.19604'
+    - '2017-10-26 19:13:49.19604'
+    - KFC
+    - 10000.0

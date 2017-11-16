@@ -1,0 +1,57 @@
+<h2 class="text-center"> Restaurant Details</h2>
+<p id="notice"><%= notice %></p>
+
+<p class="text-center">
+  <strong>Restaurant Address:</strong>
+  <%= @location.address %>
+</p>
+<p class="text-center">
+  <strong>Delivery Charges Inside Restaurant Zone:</strong>
+  <%= @location.inside_zone %>
+</p>
+<p class="text-center">
+  <strong>Delivery Charges Outside Restaurant Zone:</strong>
+  <%= @location.outsite_zone %>
+</p>
+
+<input id="location_area" value="<%= @location.area%>" hidden="true" style="width:100%" readonly/>
+<input id="restore" value="Restore Zone" type="button" hidden="true"/>
+<div id="map_out" style='width: 100%; height: 500px;'></div>
+
+<%= link_to 'Edit ', edit_location_path(@location) %> |
+<%= link_to ' Back', locations_path %>
+<br>
+<h2> Nearby Restaurants </h2>
+<ul>
+	<% if @location.nearbys.present? %>
+		<% for location in @location.nearbys(50)%>
+			<%if location.distance < 10.00 %>
+				<!-- <h2> Restaurant within 10 Miles of Delivery Address </h2> -->
+				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
+				<h4>Delivery Charges for this order will be $2</h4>
+				<%break%>
+			<%elsif location.distance > 10.00 && location.distance < 30.00%>
+				<!-- <h2>Restaurant within 10 and 20 Miles of Delivery Address</h2> -->
+				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
+				<h4>Delivery Charges for this order will be $3</h4>
+				<%break%>
+			<%elsif location.distance > 30.00 %>
+				<!-- <h2>Restaurant outside 20 Miles of Delivery Address</h2> -->
+				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
+				<h4>Delivery Charges for this order will be $5</h4>
+				<%break%>
+			<%else%>
+				<h4>No Restaurant is Closer to Your Location:)</h4>
+			<%end%>
+		<%end %>
+	<%end%>
+</ul>
+<% @my_array.each do |t| %>
+  <h4><%= t.address %> and <%= t.distance.round(2) %> miles </h4><br>
+<% end %>
+<script type="text/javascript">
+	var data = document.getElementById("location_area").value;
+	var arr = $.map($.parseJSON(data), function(el) { return el });
+	$(document).ready( loadLocation );
+	$(document).on("page:load", loadLocation );
+</script>

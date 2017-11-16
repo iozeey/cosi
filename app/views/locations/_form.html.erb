@@ -1,0 +1,38 @@
+<%= form_with(model: location, local: true) do |form| %>
+  <% if location.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(location.errors.count, "error") %> prohibited this location from being saved:</h2>
+
+      <ul>
+      <% location.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, id: :location_title, :required=> true %>
+  </div>
+  <br>
+  <div class="field">
+    <%= form.label :address %>
+    <%= form.text_field :address, id: :location_address, :required=> true %>
+  </div>
+  <br>
+  <div class="field">
+    Delivery Charges <%= form.label :inside_zone %> of Restaurant:
+    <%= form.text_field :inside_zone, id: :location_inside, :required=> true %>
+  </div>
+  <div class="field">
+    Delivery Charges <%= form.label :outsite_zone %> of Restaurant:
+    <%= form.text_field :outsite_zone, id: :location_outside, :required=> true %>
+  </div>
+  <div class="field">
+    <%= form.label :area %>
+    <%= form.text_field :area, id: :location_area, :required=> true %>
+  </div>
+  <div class="actions">
+    <%= form.submit :class=> "btn btn-success"%>
+  </div>
+<% end %>

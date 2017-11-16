@@ -1,0 +1,75 @@
+<p id="notice"><%= notice %></p>
+<div class="container">
+<input id="location_area" value="" hidden="true" /> 
+
+  <div class="text-center">
+    <h1>Our Restaurants</h1>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Address</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @locations.each do |location| %>
+            <tr>
+              <td><%= location.title %></td>
+              <td><%= location.address %></td>
+              <td><%= location.latitude %></td>
+              <td><%= location.longitude %></td>
+              <td><%= link_to 'Show', location %></td>
+              <td><%= link_to 'Edit', edit_location_path(location) %></td>
+              <td><%= link_to 'Destroy', location, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <%= link_to 'Register New Restaurant', new_location_path %>
+    <br>
+    <div style='width: 100%;'>
+        <div id="map_out" style='width: 100%; height: 500px;'></div>
+    </div>
+    <br>
+  </div>
+</div>
+<script type="text/javascript">
+    var locations_all = [];
+    <% @locations.each do |rest|%>
+        var x = <%= raw rest.area %>;
+        locations_all.push(x);
+    <%end%> 
+    function loadlocations_allLocation(){
+        var goo = google.maps,
+        map_out = new goo.Map(document.getElementById('map_out'), 
+                    { zoom: 12, center: new goo.LatLng(40.7128, -74.0060)}),
+        byId = function(s){return document.getElementById(s)};
+        //var bounds = new goo.LatLngBounds();
+        // for (var i = 0; i < markers.length; i++) {
+        //     bounds.extend(markers[i].getPosition());
+        // }
+        <% @locations.each do |rest| %>
+         new goo.Marker({
+            position: {lat: <%= rest.latitude %>, lng: <%= rest.longitude%> },
+            map: map_out,
+            title: '<%= rest.title %>',
+          });
+        <% end %>
+        //goo.fitBounds(bounds);
+        locations_all.forEach(function(locationss){
+          locationss.forEach(function(loca){
+            document.getElementById('location_area').value = JSON.stringify([loca]);
+            IO.OUT(JSON.parse(byId('location_area').value),map_out);
+          });
+        }); 
+      }
+      $(document).ready( loadlocations_allLocation );
+      $(document).on("page:load", loadlocations_allLocation );
+</script>
+

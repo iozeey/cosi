@@ -1,0 +1,105 @@
+<div class="container text-center">
+	<h2>Customer Address Details</h2>
+	<p id="notice"><%= notice %></p>
+	<p>
+		<strong>Order:</strong>
+		<%= @customer.order %>
+	</p>
+	<p>
+		<strong>Address:</strong>
+		<%= @customer.address %>
+	</p>
+	<p>
+		<strong>Latitude:</strong>
+		<%= @customer.latitude %>
+	</p>
+	<p>
+		<strong>Longitude:</strong>
+		<%= @customer.longitude %>
+	</p>
+	<%= link_to 'Edit', edit_customer_path(@customer) %> |
+	<%= link_to 'Back', customers_path %>
+</div>
+<br><br>
+<input id="location_area" value="" hidden="true" readonly/>
+<div id="map_out" style='width: 100%; height: 500px;'></div>
+<div class="text-center">
+	<h2>Estimated Delivery Costs based on Distance from Restaurant</h2>
+	<% if @Actual_Distance.present?%>
+	<%for dist in @Actual_Distance %>
+	<h3> Estimated Delivery Cost from Nearest Restaurant is $5, which is <%= dist.round(2) %> kilometers away from Delivery Address.</h3>
+	<%end%>
+	<%end%>
+</div>
+<script type="text/javascript">
+	var nearestZones = [];
+	var found = [];
+	var valuea = false;
+	latLngA = new google.maps.LatLng(<%= @customer.latitude %>, <%= @customer.longitude %>);
+	<% if @Restaurant.present? %>
+		<%for rest in @Restaurant %>
+			latLngB = new google.maps.LatLng (<%=rest.latitude%>, <%=rest.longitude%>);
+			var currentDistance = google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
+			if((currentDistance/1000) < 10){
+				nearestZones.push('"<%= raw rest.to_json %>"');
+				var x = <%= raw rest.area %>;
+				var arr = $.map(x, function(el) { return el });
+				var shapeType = arr[0].type;
+				if(shapeType=="CIRCLE"){
+					var circle_radius = arr[0].radius;
+					var point = {lat: arr[0].geometry[0], lng: arr[0].geometry[1]};
+					latLngAA = new google.maps.LatLng (point);
+					// console.log(point);
+					if(google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngAA) < circle_radius){
+						valuea = true;
+					}
+					}else if (shapeType=="POLYGON"){
+						var latlngarray = []; arr[0].geometry.forEach(function(item){
+						item.forEach(function(latlong){
+							latlngarray.push({lat: latlong[0], lng: latlong[1]});
+							var triangleShape = new google.maps.Polygon({paths: [latlngarray]});
+							valuea = (google.maps.geometry.poly.containsLocation(latLngA, triangleShape));
+						});
+					});
+				}else if(shapeType=="RECTANGLE"){
+					
+					var rectangleCorners = [];
+					arr[0].geometry.forEach(function(item){
+						rectangleCorners.push(item[0]);
+						rectangleCorners.push(item[1]);
+					});
+					var rectangleShape = new google.maps.Rectangle({
+						bounds: new google.maps.LatLngBounds(
+							new google.maps.LatLng(rectangleCorners[0], rectangleCorners[1]),
+							new google.maps.LatLng(rectangleCorners[2], rectangleCorners[3])
+							),
+					});
+				var valuea = rectangleShape.getBounds().contains(latLngA);
+					}else if(shapeType=="POLYLINE"){
+					}
+					if(valuea==true){
+						found.push(x);
+					}
+				}
+		<%end%>
+	<%end%>
+	function loadfoundLocation(){
+	var goo = google.maps,
+	map_out = new goo.Map(document.getElementById('map_out'),
+	{ zoom: 12, center: new goo.LatLng(<%= @customer.latitude %>, <%= @customer.longitude%>)}),
+	byId = function(s){return document.getElementById(s)};
+	new goo.Marker({
+	position: {lat: <%= @customer.latitude %>, lng: <%= @customer.longitude%> },
+	map: map_out,
+	title: "Delivery Order Address!",
+	});
+	found.forEach(function(locationss){
+		locationss.forEach(function(loca){
+	document.getElementById('location_area').value = JSON.stringify([loca]);
+	IO.OUT(JSON.parse(byId('location_area').value),map_out);
+	});
+	});
+	}
+	$(document).ready( loadfoundLocation );
+	$(document).on("page:load", loadfoundLocation );
+</script>
