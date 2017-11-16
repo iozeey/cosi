@@ -50,18 +50,21 @@
         map_out = new goo.Map(document.getElementById('map_out'), 
                     { zoom: 12, center: new goo.LatLng(40.7128, -74.0060)}),
         byId = function(s){return document.getElementById(s)};
-        //var bounds = new goo.LatLngBounds();
-        // for (var i = 0; i < markers.length; i++) {
-        //     bounds.extend(markers[i].getPosition());
-        // }
         <% @locations.each do |rest| %>
-         new goo.Marker({
+          var markers = new goo.Marker({
             position: {lat: <%= rest.latitude %>, lng: <%= rest.longitude%> },
             map: map_out,
             title: '<%= rest.title %>',
           });
         <% end %>
-        //goo.fitBounds(bounds);
+        // var bounds = new goo.LatLngBounds();
+        // console.log(markers.position.lat);
+        // // console.log(markers.length);
+        // // bounds.extend(markers(<%#= rest.latitude %>,  <%#= rest.longitude%>));
+        // for (var i = 0; i < markers.length; i++) {
+        //     bounds.extend(markers[i].getPosition());
+        // }
+        // map_out.fitBounds(bounds);
         locations_all.forEach(function(locationss){
           locationss.forEach(function(loca){
             document.getElementById('location_area').value = JSON.stringify([loca]);

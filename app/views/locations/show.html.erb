@@ -1,23 +1,20 @@
 <h2 class="text-center"> Restaurant Details</h2>
 <p id="notice"><%= notice %></p>
-
 <p class="text-center">
-  <strong>Restaurant Address:</strong>
-  <%= @location.address %>
+	<strong>Restaurant Address:</strong>
+	<%= @location.address %>
 </p>
 <p class="text-center">
-  <strong>Delivery Charges Inside Restaurant Zone:</strong>
-  <%= @location.inside_zone %>
+	<strong>Delivery Charges Inside Restaurant Zone:</strong>
+	<%= @location.inside_zone %>
 </p>
 <p class="text-center">
-  <strong>Delivery Charges Outside Restaurant Zone:</strong>
-  <%= @location.outsite_zone %>
+	<strong>Delivery Charges Outside Restaurant Zone:</strong>
+	<%= @location.outsite_zone %>
 </p>
-
 <input id="location_area" value="<%= @location.area%>" hidden="true" style="width:100%" readonly/>
 <input id="restore" value="Restore Zone" type="button" hidden="true"/>
 <div id="map_out" style='width: 100%; height: 500px;'></div>
-
 <%= link_to 'Edit ', edit_location_path(@location) %> |
 <%= link_to ' Back', locations_path %>
 <br>
@@ -52,6 +49,25 @@
 <script type="text/javascript">
 	var data = document.getElementById("location_area").value;
 	var arr = $.map($.parseJSON(data), function(el) { return el });
-	$(document).ready( loadLocation );
-	$(document).on("page:load", loadLocation );
+	function load_location()
+	{   
+	    var goo = google.maps,
+	    map_out = new goo.Map(document.getElementById('map_out'), 
+	                { zoom: 12, center: new goo.LatLng(<%= @location.latitude %>, <%= @location.longitude %>)}),
+	    shapes = [],
+	    byId = function(s){return document.getElementById(s)};
+	      if(this.shapes){
+	        for(var i=0;i<this.shapes.length;++i){
+	              this.shapes[i].setMap(null);
+	        }
+	      }
+	      this.shapes=IO.OUT(JSON.parse(byId('location_area').value),map_out);
+	    var marker = new goo.Marker({
+	      position: {lat: <%= @location.latitude %>, lng: <%= @location.longitude %> },
+	      map: map_out,
+	      title: 'KFC!'
+	      });
+	}
+	$(document).ready( load_location );
+	$(document).on("page:load", load_location );
 </script>

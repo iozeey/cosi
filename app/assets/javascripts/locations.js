@@ -15,7 +15,7 @@ function loadLocation()
       this.shapes=IO.OUT(JSON.parse(byId('location_area').value),map_out);
     //});
     var marker = new goo.Marker({
-      position: {lat: 40.7128, lng: -74.0060 },
+      position: {lat: 40.7128, lng: -74.0060},
       map: map_out,
       title: 'KFC!'
       });
