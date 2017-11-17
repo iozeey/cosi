@@ -18,31 +18,6 @@
 <%= link_to 'Edit ', edit_location_path(@location) %> |
 <%= link_to ' Back', locations_path %>
 <br>
-<h2> Nearby Restaurants </h2>
-<ul>
-	<% if @location.nearbys.present? %>
-		<% for location in @location.nearbys(50)%>
-			<%if location.distance < 10.00 %>
-				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
-				<h4>Delivery Charges for this order will be $2</h4>
-				<%break%>
-			<%elsif location.distance > 10.00 && location.distance < 30.00%>
-				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
-				<h4>Delivery Charges for this order will be $3</h4>
-				<%break%>
-			<%elsif location.distance > 30.00 %>
-				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
-				<h4>Delivery Charges for this order will be $5</h4>
-				<%break%>
-			<%else%>
-				<h4>No Restaurant is Closer to Your Location:)</h4>
-			<%end%>
-		<%end %>
-	<%end%>
-</ul>
-<% @my_array.each do |t| %>
-  <h4><%= t.address %> and <%= t.distance.round(2) %> miles </h4><br>
-<% end %>
 <script type="text/javascript">
 	var data = document.getElementById("location_area").value;
 	var arr = $.map($.parseJSON(data), function(el) { return el });
