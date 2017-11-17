@@ -23,17 +23,14 @@
 	<% if @location.nearbys.present? %>
 		<% for location in @location.nearbys(50)%>
 			<%if location.distance < 10.00 %>
-				<!-- <h2> Restaurant within 10 Miles of Delivery Address </h2> -->
 				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
 				<h4>Delivery Charges for this order will be $2</h4>
 				<%break%>
 			<%elsif location.distance > 10.00 && location.distance < 30.00%>
-				<!-- <h2>Restaurant within 10 and 20 Miles of Delivery Address</h2> -->
 				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
 				<h4>Delivery Charges for this order will be $3</h4>
 				<%break%>
 			<%elsif location.distance > 30.00 %>
-				<!-- <h2>Restaurant outside 20 Miles of Delivery Address</h2> -->
 				<h4>Our Nearest Restaurant is <%= link_to location.address, location %>(<%= location.distance.round(2)%> miles) away from Your Address</h4>
 				<h4>Delivery Charges for this order will be $5</h4>
 				<%break%>

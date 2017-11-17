@@ -10,9 +10,7 @@ class CustomersController < ApplicationController
   # GET /customers/1
   # GET /customers/1.json
   def show
-    find_in_radius
-    @Restaurant
-    #@Actual_Distance
+    @Restaurant = Location.all
   end
 
   # GET /customers/new
@@ -75,28 +73,4 @@ class CustomersController < ApplicationController
       params.require(:customer).permit(:order, :address, :latitude, :longitude)
     end
 
-    def find_in_radius
-      @Restaurant = Location.all
-    #   distance = []
-    #   nearestZones = []
-    #   @customer = Customer.find(params[:id])
-    #   @locations = Location.all
-
-    #   for location in @locations.each
-    #     @point2 = location.address
-    #     @point1 = @customer.address
-    #     currentDistance = Geocoder::Calculations.distance_between(@point1, @point2)
-    #     if currentDistance < (10)
-    #       distance.push(currentDistance)
-    #       nearestZones.push(location)
-    #     end
-    #   end
-
-    #   if nearestZones.length > 0
-    #     @Restaurant = nearestZones
-    #     @Actual_Distance = distance
-    #   else
-    #     flash[:notice] = "Sorry, You are not in any Restaurant Zone."
-    #   end
-    end
 end

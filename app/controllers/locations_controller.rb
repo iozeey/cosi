@@ -10,10 +10,6 @@ class LocationsController < ApplicationController
           marker.lng location.longitude
           marker.title location.title
       end
-
-      # @circles_json = '[
-      #     {"lng": -73.8819335, "lat": 40.6405134, "radius": 10000,"strokeColor": "#C0C0C0"}]'
-      # @circles = Location.all.map{|p| {:longitude => p.longitude, :latitude => p.latitude, :radius => p.radius}}.to_json
   end
 
 

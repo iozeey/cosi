@@ -29,10 +29,9 @@
     <%= form.text_field :outsite_zone, id: :location_outside, :required=> true %>
   </div>
   <div class="field">
-    <%= form.label :area %>
-    <%= form.text_field :area, id: :location_area, :required=> true %>
+    <%= form.text_field :area, id: :location_area, :hidden => true %>
   </div>
   <div class="actions">
-    <%= form.submit :class=> "btn btn-success"%>
+    <%= form.submit :class=> "btn btn-success", id: :clickFrom%>
   </div>
 <% end %>

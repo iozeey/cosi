@@ -23,27 +23,21 @@
 <br><br>
 <input id="location_area" value="" hidden="true" readonly/>
 <div id="map_out" style='width: 100%; height: 500px;'></div>
-<div class="text-center">
-	<br>
-	<h2>This Delivery Address is within Delivery Zone of following restaurants. </h2>
-	<br>
-</div>
-	<%# if @Actual_Distance.present?%>
-	<%#for dist in @Actual_Distance %>
-	<!-- <h3> Estimated Delivery Cost from Nearest Restaurant is $5, which is <%#= dist.round(2) %> kilometers away from Delivery Address.</h3> -->
-	<%#end%>
-	<%#end%>
+<br><br>
 <script type="text/javascript">
 	var nearestZones = [];
 	var found = [];
 	var bool_value = false;
+	var heading = document.createElement("H3");
+	var smallheading = document.createElement("H5");
+	var currentDistance;
+	var headingText = document.createTextNode("This Delivery Address is within Delivery Zone of following restaurants.");
 	latLngA = new google.maps.LatLng(<%= @customer.latitude %>, <%= @customer.longitude %>);
 	<% if @Restaurant.present? %>
 		<%for rest in @Restaurant %>
 			latLngB = new google.maps.LatLng (<%=rest.latitude%>, <%=rest.longitude%>);
-			var currentDistance = google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
+			currentDistance = google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
 			if((currentDistance/1000) < 10){
-				nearestZones.push('"<%= raw rest.to_json %>"');
 				var x = <%= raw rest.area %>;
 				var arr = $.map(x, function(el) { return el });
 				var shapeType = arr[0].type;
@@ -53,6 +47,7 @@
 					latLngAA = new google.maps.LatLng (point);
 					if(google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngAA) < circle_radius){
 						bool_value = true;
+						bool_value_loc = bool_value;
 					}
 					}else if (shapeType=="POLYGON"){
 						var latlngarray = []; arr[0].geometry.forEach(function(item){
@@ -74,41 +69,60 @@
 							new google.maps.LatLng(rectangleCorners[2], rectangleCorners[3])
 							),
 					});
-				var bool_value = rectangleShape.getBounds().contains(latLngA);
+					bool_value = rectangleShape.getBounds().contains(latLngA);
 					}else if(shapeType=="POLYLINE"){
+						bool_value = false;
+					}else{
 						bool_value = false;
 					}
 					if(bool_value==true){
 						found.push(x);
-						var heading = document.createElement("H3");
+    					heading.appendChild(headingText)
     					var t = document.createTextNode("<%= raw rest.title %> Restaurant is "+ (currentDistance/1000).toFixed(2) +" Kilometers away and Delivery Cost is <%= raw rest.inside_zone %> Dollars.");
-    						heading.appendChild(t);
+    						smallheading.appendChild(t);
     						document.body.appendChild(heading);
+    						document.body.appendChild(smallheading);
+    						smallheading.appendChild(document.createElement("br"));
 					}
-					 // else{
-					// 	var smallheading = document.createElement("H5");
-					// 	var t = document.createTextNode("<%= raw rest.title %> Restaurant is "+ (currentDistance/1000).toFixed(2) +" Kilometers away and Delivery Cost is <%= raw rest.outsite_zone %> Dollars");
-    	// 					smallheading.appendChild(t);
-    	// 					document.body.appendChild(smallheading);
-					// }
+					 else{
+						nearestZones.push({restaurant_object: <%= raw rest.to_json %>, dist: currentDistance});
+					}
 				}
 		<%end%>
 	<%end%>
+	if(found[length]==null){
+		if(nearestZones[length] != null){
+			headingText = document.createTextNode("This Address is not in any Restuarant's Delivery Zone, but Following Restaurants are within the 10KM of the Delivery Address.");
+			heading.appendChild(headingText);
+			document.body.appendChild(heading);
+			nearestZones.forEach(function(index){
+				var t = document.createTextNode(index.restaurant_object.title +  " Restaurant is "+ (index.dist/1000).toFixed(2) +"  Kilometers away and Delivery Cost is " + index.restaurant_object.outsite_zone + " Dollars. ");
+    			smallheading.appendChild(t);
+    			document.body.appendChild(smallheading);
+				smallheading.appendChild(document.createElement("br"));
+			});
+		}else{
+			headingText = document.createTextNode("This Address is not in Either any Restuarant's Delivery Zone nor in 10KM range of the Delivery Address.");
+			heading.appendChild(headingText);
+			document.body.appendChild(heading);
+		}
+
+	}
 	function loadfoundLocation(){
 	var goo = google.maps,
 	map_out = new goo.Map(document.getElementById('map_out'),
 	{ zoom: 12, center: new goo.LatLng(<%= @customer.latitude %>, <%= @customer.longitude%>)}),
 	byId = function(s){return document.getElementById(s)};
 	new goo.Marker({
-	position: {lat: <%= @customer.latitude %>, lng: <%= @customer.longitude%> },
-	map: map_out,
-	title: "Delivery Order Address!",
+		position: {lat: <%= @customer.latitude %>, lng: <%= @customer.longitude%> },
+		map: map_out,
+		title: "Delivery Order Address!",
 	});
 	found.forEach(function(locationss){
 		locationss.forEach(function(loca){
-	document.getElementById('location_area').value = JSON.stringify([loca]);
-	IO.OUT(JSON.parse(byId('location_area').value),map_out);
-	});
+			document.getElementById('location_area').value = JSON.stringify([loca]);
+			IO.OUT(JSON.parse(byId('location_area').value),map_out);
+		});
 	});
 	}
 	$(document).ready( loadfoundLocation );

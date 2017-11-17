@@ -5,15 +5,12 @@ function loadLocation()
                 { zoom: 12, center: new goo.LatLng(40.7128, -74.0060)}),
     shapes = [],
     byId = function(s){return document.getElementById(s)};
-
-    //goo.event.addDomListener(byId('restore'), 'click', function(){
       if(this.shapes){
         for(var i=0;i<this.shapes.length;++i){
               this.shapes[i].setMap(null);
         }
       }
-      this.shapes=IO.OUT(JSON.parse(byId('location_area').value),map_out);
-    //});
+    this.shapes=IO.OUT(JSON.parse(byId('location_area').value),map_out);
     var marker = new goo.Marker({
       position: {lat: 40.7128, lng: -74.0060},
       map: map_out,
@@ -26,7 +23,6 @@ function initialize()
 	var goo = google.maps,
       map_in = new goo.Map(document.getElementById('map_in'), 
               { zoom: 12, center: new goo.LatLng(40.7128, -74.0060)}),
-            	// { zoom: 12, center: new goo.LatLng(<%=@location.latitude%>,<%=@location.longitude%>)}),
       map_out = new goo.Map(document.getElementById('map_out'), 
                   { zoom: 12, center: new goo.LatLng(40.7128, -74.0060)}),
       shapes = [],
@@ -65,8 +61,11 @@ function initialize()
     goo.event.addDomListener(byId("clear_shapes"), 'click', clearShapes);
     goo.event.addDomListener(byId("save_encoded"), 'click', function(){
       var data=IO.IN(shapes,true);byId('location_area').value=JSON.stringify(data);});
-    goo.event.addDomListener(byId('Shape'), 'click', function(){
-      var data=IO.IN(shapes,false);byId("location_area").value=JSON.stringify(data);});
+    goo.event.addDomListener(byId('clickFrom'), 'click', function(){
+      if(document.getElementById('location_area').length>10){}
+        var data=IO.IN(shapes,false);byId("location_area").value=JSON.stringify(data);
+    });
+      
     goo.event.addDomListener(byId('restore'), 'click', function(){
 	      if(this.shapes){
 	        for(var i=0;i<this.shapes.length;++i){
